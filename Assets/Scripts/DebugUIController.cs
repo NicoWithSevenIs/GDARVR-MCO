@@ -4,7 +4,7 @@ using UnityEditor;
 
 public class DebugUIController : MonoBehaviour
 {
-    private NetworkManager networkManager;
+    /*private NetworkManager networkManager;
     private Vector2 scrollPosition;
     private string logMessages = "";
     private bool showGUI = true;
@@ -128,5 +128,5 @@ public class DebugUIController : MonoBehaviour
         GUILayout.EndVertical();
 
         GUI.DragWindow();
-    }
+    }*/
 }
