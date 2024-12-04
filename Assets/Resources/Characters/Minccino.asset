@@ -17,6 +17,6 @@ MonoBehaviour:
   model: {fileID: 919132149155446097, guid: 4853fce0b150b2a4faa24371f9ffe1ba, type: 3}
   power: 2
   health: 6
-  Ability_1_ID: 0
-  Ability_2_ID: 0
-  Ability_3_ID: 0
+  Ability_1_ID: 7
+  Ability_2_ID: 8
+  Ability_3_ID: 9

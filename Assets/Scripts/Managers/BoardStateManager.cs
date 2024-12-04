@@ -1,0 +1,35 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+
+public class BoardStateManager : MonoBehaviour
+{
+    #region Singleton
+    public static BoardStateManager instance { get; private set; }
+    private void Awake()
+    {
+        if (instance == null)
+            instance = this;
+        else Destroy(gameObject);
+        //characters = new(Resources.LoadAll("Resources/Characters") as Character[]);
+    }
+    #endregion
+
+    //private List<Character> characters;
+
+    private List<Unit> playerAUnits = new();
+    private List<Unit> playerBUnits = new();
+
+    public Unit ModelLookUp(GameObject model)
+    {
+        List<Unit> lookup = new(playerAUnits);
+        lookup.AddRange(playerBUnits);
+        foreach (var unit in lookup)
+            if (model == unit.FieldObject)
+                return unit;
+        return null;
+    }
+
+
+}

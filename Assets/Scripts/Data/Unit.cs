@@ -5,6 +5,8 @@ using UnityEngine;
 public class Unit
 {
     private Character character;
+    public Character Character { get => character; }
+
 
     private int currentPower;
     public int CurrentPower { get => currentPower; set => currentPower = value; }
@@ -14,13 +16,18 @@ public class Unit
 
     private int hightestHealth;
     public int HighestHealth { get => hightestHealth; }
-    public Unit(Character character)
+
+    private GameObject fieldObject;
+    public GameObject FieldObject { get => fieldObject; }
+
+    public Unit(Character character, GameObject fieldObject)
     {
         this.character = character;
         currentHealth = character.health;
         currentPower = character.power;
 
         hightestHealth = character.health;
+        this.fieldObject = fieldObject;
     }
 
     public void ChangePower(int amount)
