@@ -6,8 +6,6 @@ public class GameStateManager : NetworkBehaviour
 {
     public static GameStateManager Instance { get; private set; }
 
-    [SerializeField] private GameObject unitPrefab; // Reference to your Unit prefab
-
     [SyncVar]
     private int currentRound = 1;
 
@@ -39,10 +37,6 @@ public class GameStateManager : NetworkBehaviour
     [SyncVar(hook = nameof(OnPlayer2ManaChanged))]
     private int player2Mana = 5;
 
-    // Unit Management
-    private readonly SyncDictionary<int, Unit> player1Units = new SyncDictionary<int, Unit>();
-    private readonly SyncDictionary<int, Unit> player2Units = new SyncDictionary<int, Unit>();
-
     private void Awake()
     {
         if (Instance == null)
@@ -72,88 +66,9 @@ public class GameStateManager : NetworkBehaviour
         player2ActionBudget = 3;
         player2Mana = 1;
 
-        // Clear any existing units
-        player1Units.Clear();
-        player2Units.Clear();
-
         RpcUpdateGameState();
     }
 
-    // Unit Management Methods
-    [Command(requiresAuthority = false)]
-    public void CmdSpawnUnit(int playerIndex, int unitId, Character character)
-    {
-        if (unitPrefab == null)
-        {
-            Debug.LogError("Unit prefab not assigned in GameStateManager!");
-            return;
-        }
-
-        GameObject unitObj = Instantiate(unitPrefab);
-        Unit unit = unitObj.GetComponent<Unit>();
-
-        if (unit == null)
-        {
-            Debug.LogError("Unit component not found on prefab!");
-            Destroy(unitObj);
-            return;
-        }
-
-        unit.Initialize(character);
-
-        if (playerIndex == 0)
-            player1Units[unitId] = unit;
-        else
-            player2Units[unitId] = unit;
-
-        NetworkServer.Spawn(unitObj);
-    }
-
-    [Command(requiresAuthority = false)]
-    public void CmdModifyUnitHealth(int playerIndex, int unitId, int amount, bool willKill = true)
-    {
-        Unit unit = GetUnit(playerIndex, unitId);
-        if (unit != null)
-        {
-            unit.ChangeHealth(amount, willKill);
-        }
-    }
-
-    [Command(requiresAuthority = false)]
-    public void CmdModifyUnitPower(int playerIndex, int unitId, int amount)
-    {
-        Unit unit = GetUnit(playerIndex, unitId);
-        if (unit != null)
-        {
-            unit.ChangePower(amount);
-        }
-    }
-
-    [Command(requiresAuthority = false)]
-    public void CmdRemoveUnit(int playerIndex, int unitId)
-    {
-        Unit unit = GetUnit(playerIndex, unitId);
-        if (unit != null)
-        {
-            if (playerIndex == 0)
-                player1Units.Remove(unitId);
-            else
-                player2Units.Remove(unitId);
-
-            NetworkServer.Destroy(unit.gameObject);
-        }
-    }
-
-    public Unit GetUnit(int playerIndex, int unitId)
-    {
-        var units = playerIndex == 0 ? player1Units : player2Units;
-        return units.ContainsKey(unitId) ? units[unitId] : null;
-    }
-
-    public Dictionary<int, Unit> GetPlayer1Units() => new Dictionary<int, Unit>(player1Units);
-    public Dictionary<int, Unit> GetPlayer2Units() => new Dictionary<int, Unit>(player2Units);
-
-    // Existing Game State Methods
     void OnGameStateChanged(bool oldValue, bool newValue)
     {
         if (newValue)
@@ -224,15 +139,18 @@ public class GameStateManager : NetworkBehaviour
         isFirstPlayerPriority = !isFirstPlayerPriority;
         activePlayerIndex = isFirstPlayerPriority ? 0 : 1;
 
+        // Restore resources at the start of each round
         RestorePlayerResources();
     }
 
     [Server]
     private void RestorePlayerResources()
     {
+        // Restore Action Budget to base value
         player1ActionBudget = 3;
         player2ActionBudget = 3;
 
+        // Restore Mana equal to round number
         player1Mana = currentRound;
         player2Mana = currentRound;
     }
@@ -244,12 +162,14 @@ public class GameStateManager : NetworkBehaviour
 
         if (actionBudget > 0)
         {
+            // Decrease action budget
             if (playerIndex == 0)
                 CmdModifyPlayer1ActionBudget(-1);
             else
                 CmdModifyPlayer2ActionBudget(-1);
 
             Debug.Log($"Player {playerIndex + 1} declared action: {actionDetails}");
+
             TargetActionResult(GetPlayerConnection(playerIndex), true, "Action declared successfully");
         }
         else
@@ -265,30 +185,30 @@ public class GameStateManager : NetworkBehaviour
 
         if (mana > 0)
         {
+            // Decrease mana
             if (playerIndex == 0)
                 CmdModifyPlayer1Mana(-1);
             else
                 CmdModifyPlayer2Mana(-1);
 
             Debug.Log($"Player {playerIndex + 1} cast spell: {spellDetails}");
+
+            // Return success to client
             TargetActionResult(GetPlayerConnection(playerIndex), true, "Spell cast successfully");
         }
         else
         {
+            // Return failure to client
             TargetActionResult(GetPlayerConnection(playerIndex), false, "Not enough Mana");
         }
     }
 
-    [Command(requiresAuthority = false)]
-    public void CmdModifyEnemyNexusHP(int playerIndex, int amount)
+    [TargetRpc]
+    private void TargetActionResult(NetworkConnection target, bool success, string message)
     {
-        if (playerIndex == 0)
-            CmdModifyPlayer2NexusHP(amount);
-        else
-            CmdModifyPlayer1NexusHP(amount);
+        Debug.Log($"Action Result: {message}");
     }
 
-    // Helper methods
     private NetworkConnection GetPlayerConnection(int playerIndex)
     {
         if (CustomNetworkManager.singleton != null &&
@@ -299,11 +219,6 @@ public class GameStateManager : NetworkBehaviour
         return null;
     }
 
-    [TargetRpc]
-    private void TargetActionResult(NetworkConnection target, bool success, string message)
-    {
-        Debug.Log($"Action Result: {message}");
-    }
 
     // Player 1 Command Methods
     [Command(requiresAuthority = false)]
