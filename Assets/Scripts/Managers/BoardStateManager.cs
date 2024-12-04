@@ -46,7 +46,7 @@ public class BoardStateManager : MonoBehaviour
 
     public void MakeCharacter(int PlayerIndex, GameObject model)
     {
-        Character c = Array.Find<Character>(characters, t => t.model == model);
+        Character c = Array.Find<Character>(characters, t => t.model.name == model.name);
         var UnitPool = PlayerIndex == 1 ? playerAUnits : playerBUnits;
         var newUnit = new Unit(c, model);
         UnitPool.Add(newUnit);
