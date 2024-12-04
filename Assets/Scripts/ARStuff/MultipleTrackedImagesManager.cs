@@ -28,7 +28,7 @@ public class MultipleTrackedImagesManager : MonoBehaviour
             GameObject newARCharacterObject = Instantiate(prefab);
             newARCharacterObject.transform.position = Vector3.zero;
             newARCharacterObject.transform.rotation = Quaternion.Euler(0, 180, 0);
-           // newARCharacterObject.transform.localScale = 
+            // newARCharacterObject.transform.localScale = 
             newARCharacterObject.name = prefab.name;
             newARCharacterObject.gameObject.SetActive(false);
             _arObjectCharacters.Add(newARCharacterObject.name, newARCharacterObject);
@@ -52,6 +52,7 @@ public class MultipleTrackedImagesManager : MonoBehaviour
         {
             UpdateTrackedImage(trackedImage);            
             Texture2D test = trackedImage.GetComponent<Texture2D>();
+            Texture2D test1 = trackedImage.referenceImage.texture;
 
         }
 
