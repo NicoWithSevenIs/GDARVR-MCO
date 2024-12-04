@@ -10,6 +10,8 @@ public enum ETargetType
     ALLY_MULTIPLE,
     ENEMY_SINGLE,
     ENEMY_MULTIPLE,
+    ALL_ENEMIES,
+    ALL_ALLIES,
 }
 
 public abstract class Ability { 
