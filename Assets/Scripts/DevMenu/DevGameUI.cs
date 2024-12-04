@@ -9,7 +9,7 @@ public class DevGameUI : MonoBehaviour
     private float rightMargin = 10f;
     private float topMargin = 10f;
     private float uiWidth = 200f;
-    private float uiHeight = 300f;
+    private float uiHeight = 500f; 
 
     void Awake()
     {
@@ -45,21 +45,20 @@ public class DevGameUI : MonoBehaviour
 
     void OnGUI()
     {
-        // Debug info always visible in top left
         GUI.Label(new Rect(10, 10, 300, 20), $"Connection Status: {(NetworkClient.isConnected ? "Connected" : "Not Connected")}");
         GUI.Label(new Rect(10, 30, 300, 20), $"Local Player: {(localPlayer != null ? "Found" : "Not Found")}");
         GUI.Label(new Rect(10, 50, 300, 20), $"GameStateManager: {(gameStateManager != null ? "Found" : "Not Found")}");
 
-        // Calculate position for top right corner
         float xPos = Screen.width - uiWidth - rightMargin;
 
-        // Create the UI area in the top right
         GUILayout.BeginArea(new Rect(xPos, topMargin, uiWidth, uiHeight));
 
         if (localPlayer != null && gameStateManager != null)
         {
             try
             {
+                // Game State Information
+                GUILayout.Label("Game State", GUI.skin.box);
                 GUILayout.Label($"Round: {gameStateManager.GetCurrentRound()}");
                 GUILayout.Label($"Phase: {gameStateManager.GetCurrentPhase()}");
                 GUILayout.Label($"Your Player: {localPlayer.NetworkPlayerIndex + 1}");
@@ -73,36 +72,92 @@ public class DevGameUI : MonoBehaviour
                 GUILayout.Label(isYourTurn ? "IT'S YOUR TURN!" : "Waiting for other player...");
                 GUI.color = Color.white;
 
-                // Show action buttons only if it's your turn
+                GUILayout.Space(10);
+
+                // Player 1 Stats
+                GUILayout.Label("Player 1 Stats", GUI.skin.box);
+                GUILayout.BeginHorizontal();
+                GUILayout.Label($"Nexus HP: {gameStateManager.GetPlayer1NexusHP()}");
+                if (GUILayout.Button("+", GUILayout.Width(30))) gameStateManager.CmdModifyPlayer1NexusHP(1);
+                if (GUILayout.Button("-", GUILayout.Width(30))) gameStateManager.CmdModifyPlayer1NexusHP(-1);
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label($"Action Budget: {gameStateManager.GetPlayer1ActionBudget()}");
+                if (GUILayout.Button("+", GUILayout.Width(30))) gameStateManager.CmdModifyPlayer1ActionBudget(1);
+                if (GUILayout.Button("-", GUILayout.Width(30))) gameStateManager.CmdModifyPlayer1ActionBudget(-1);
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label($"Mana: {gameStateManager.GetPlayer1Mana()}");
+                if (GUILayout.Button("+", GUILayout.Width(30))) gameStateManager.CmdModifyPlayer1Mana(1);
+                if (GUILayout.Button("-", GUILayout.Width(30))) gameStateManager.CmdModifyPlayer1Mana(-1);
+                GUILayout.EndHorizontal();
+
+                GUILayout.Space(10);
+
+                // Player 2 Stats
+                GUILayout.Label("Player 2 Stats", GUI.skin.box);
+                GUILayout.BeginHorizontal();
+                GUILayout.Label($"Nexus HP: {gameStateManager.GetPlayer2NexusHP()}");
+                if (GUILayout.Button("+", GUILayout.Width(30))) gameStateManager.CmdModifyPlayer2NexusHP(1);
+                if (GUILayout.Button("-", GUILayout.Width(30))) gameStateManager.CmdModifyPlayer2NexusHP(-1);
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label($"Action Budget: {gameStateManager.GetPlayer2ActionBudget()}");
+                if (GUILayout.Button("+", GUILayout.Width(30))) gameStateManager.CmdModifyPlayer2ActionBudget(1);
+                if (GUILayout.Button("-", GUILayout.Width(30))) gameStateManager.CmdModifyPlayer2ActionBudget(-1);
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal();
+                GUILayout.Label($"Mana: {gameStateManager.GetPlayer2Mana()}");
+                if (GUILayout.Button("+", GUILayout.Width(30))) gameStateManager.CmdModifyPlayer2Mana(1);
+                if (GUILayout.Button("-", GUILayout.Width(30))) gameStateManager.CmdModifyPlayer2Mana(-1);
+                GUILayout.EndHorizontal();
+
+                GUILayout.Space(10);
+
+                // Action Buttons (only shown if it's your turn)
                 if (isYourTurn)
                 {
-                    GUILayout.Space(10);  // Add some spacing
-
-                    // Show appropriate buttons based on the current phase
                     Phase currentPhase = gameStateManager.GetCurrentPhase();
+                    int playerIndex = localPlayer.NetworkPlayerIndex;
+                    bool canDeclareAction = playerIndex == 0 ?
+                        gameStateManager.GetPlayer1ActionBudget() > 0 :
+                        gameStateManager.GetPlayer2ActionBudget() > 0;
+                    bool canCastSpell = playerIndex == 0 ?
+                        gameStateManager.GetPlayer1Mana() > 0 :
+                        gameStateManager.GetPlayer2Mana() > 0;
 
+                    // Show Declare Action button with appropriate state
                     if (currentPhase == Phase.DeclareActions ||
                         (currentPhase == Phase.DeclareAndSpell && localPlayer.NetworkPlayerIndex == 1))
                     {
+                        GUI.enabled = canDeclareAction;
                         if (GUILayout.Button("Declare Action"))
                         {
-                            localPlayer.CmdDeclareAction("Sample Action");
+                            gameStateManager.CmdTryDeclareAction(playerIndex, "Sample Action");
                         }
+                        GUI.enabled = true;
                     }
 
+                    // Show Cast Spell button with appropriate state
                     if (currentPhase == Phase.DeclareAndSpell || currentPhase == Phase.SpellOnly)
                     {
+                        GUI.enabled = canCastSpell;
                         if (GUILayout.Button("Cast Spell"))
                         {
-                            localPlayer.CmdCastSpell("Sample Spell");
+                            gameStateManager.CmdTryCastSpell(playerIndex, "Sample Spell");
                         }
+                        GUI.enabled = true;
                     }
 
-                    GUILayout.Space(5);  // Add small spacing before End Turn button
+                    GUILayout.Space(5);
 
+                    // End Turn button
                     if (NetworkClient.isConnected)
                     {
-                        // Make End Turn button more noticeable
                         GUI.color = Color.yellow;
                         if (GUILayout.Button("End Turn"))
                         {

@@ -25,7 +25,6 @@ public class CustomNetworkManager : NetworkManager
         // Get the PlayerController component
         PlayerController playerController = playerObj.GetComponent<PlayerController>();
 
-        // Make sure we have a valid PlayerController
         if (playerController != null)
         {
             // Add to players list before spawning
@@ -77,7 +76,6 @@ public class CustomNetworkManager : NetworkManager
         }
     }
 
-    // Optional: Add these methods to handle network events better
     public override void OnStartServer()
     {
         base.OnStartServer();
