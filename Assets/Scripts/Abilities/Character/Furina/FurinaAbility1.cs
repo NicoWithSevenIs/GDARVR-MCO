@@ -6,7 +6,7 @@ public class FurinaAbility1 : Ability
 {
     public override int ID => 1;
 
-    public override string AbilitName => "Salon Solitaire";
+    public override string AbilityName => "Salon Solitaire";
 
     public override string Description => "Reduces Health by 2 to Increase Power by 2";
 

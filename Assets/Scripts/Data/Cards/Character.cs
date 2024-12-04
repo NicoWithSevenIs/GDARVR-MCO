@@ -14,8 +14,8 @@ public class Character : Card
     public int health;
 
     [Header("Abilities")]
-    public int Ability1ID;
-    public int Ability2ID;
-    public int Ability3ID;
+    public int Ability_1_ID;
+    public int Ability_2_ID;
+    public int Ability_3_ID;
 
 }
