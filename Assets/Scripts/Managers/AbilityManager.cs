@@ -32,27 +32,27 @@ public class AbilityManager: MonoBehaviour
 
     [SerializeField] private List<Debugger> debuggerList = new();
 
-    public static Ability GetMove(int key) => instance.abilityDict[key];
+    public static Ability GetAbility(int key) => instance.abilityDict[key];
 
     public void Build()
     {
-        Type moveType = typeof(Ability);
+        Type type = typeof(Ability);
         Assembly assembly = Assembly.GetExecutingAssembly();
         IEnumerable<Type> types = assembly.GetTypes();
+ 
+        types = types.Where(t => t.IsSubclassOf(type));
 
-        types = types.Where(t => t.IsSubclassOf(moveType));
-
-        foreach (Type type in types)
+        foreach (Type t in types)
         {
-            var move = Activator.CreateInstance(type) as Ability;
+            var ability = Activator.CreateInstance(t) as Ability;
 
-            if(abilityDict.ContainsKey(move.ID))
+            if(abilityDict.ContainsKey(ability.ID))
             {
-                Debug.LogError($"Could not add {move.GetType().Name} as ID [{move.ID}] already exists for {abilityDict[move.ID].GetType().Name}");
+                Debug.LogError($"Could not add {ability.GetType().Name} as ID [{ability.ID}] already exists for {abilityDict[ability.ID].GetType().Name}");
                 continue;
             }
 
-            abilityDict.Add(move.ID, move);
+            abilityDict.Add(ability.ID, ability);
         }
 
         DebugDict();
@@ -60,11 +60,11 @@ public class AbilityManager: MonoBehaviour
 
     public void DebugDict()
     {
-        foreach(var move in abilityDict)
+        foreach(var ability in abilityDict)
         {
             var d = new Debugger();
-            d.ID = move.Value.ID;
-            d.Name = move.Value.GetType().Name;
+            d.ID = ability.Value.ID;
+            d.Name = ability.Value.GetType().Name;
             debuggerList.Add(d);    
         }
     }
