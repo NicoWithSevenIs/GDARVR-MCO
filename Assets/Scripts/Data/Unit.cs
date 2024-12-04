@@ -15,13 +15,18 @@ public class Unit
         currentPower = character.power;
     }
 
-    public void ReducePower(int amount)
+    public void ChangePower(int amount)
     {
-        currentPower -= amount;
+        currentHealth = Mathf.Max(0, currentHealth - amount);
     }
 
-    public void ReduceHealth(int amount)
+    public void ChangeHealth(int amount, bool willKill = true)
     {
         currentHealth -= amount;
+
+        if (willKill)
+            Debug.Log("Dead");
+        else currentHealth = 1;
+        
     }
 }
