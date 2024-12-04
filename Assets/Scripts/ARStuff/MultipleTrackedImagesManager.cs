@@ -28,7 +28,6 @@ public class MultipleTrackedImagesManager : MonoBehaviour
             GameObject newARCharacterObject = Instantiate(prefab);
             newARCharacterObject.transform.position = Vector3.zero;
             newARCharacterObject.transform.rotation = Quaternion.Euler(0, 180, 0);
-            newARCharacterObject.transform.rotation = Quaternion.Euler(0, 180, 0);
             // newARCharacterObject.transform.localScale = 
             newARCharacterObject.name = prefab.name;
             newARCharacterObject.gameObject.SetActive(false);
