@@ -27,7 +27,7 @@ public class MultipleTrackedImagesManager : MonoBehaviour
         {
             GameObject newARCharacterObject = Instantiate(prefab);
             newARCharacterObject.transform.position = Vector3.zero;
-            newARCharacterObject.transform.rotation = Quaternion.Euler(0, 180, 0);
+            newARCharacterObject.transform.rotation = Quaternion.Euler(AdjustRotation(prefab));  
             // newARCharacterObject.transform.localScale = 
             newARCharacterObject.name = prefab.name;
             newARCharacterObject.gameObject.SetActive(false);
@@ -76,6 +76,19 @@ public class MultipleTrackedImagesManager : MonoBehaviour
             _arObjectCharacters[trackedImage.referenceImage.name].gameObject.SetActive(true);
             _arObjectCharacters[trackedImage.referenceImage.name].transform.position = trackedImage.transform.position;
         }
+    }
+
+    Vector3 AdjustRotation(GameObject obj)
+    {
+        if(obj.name == "Patrick")
+        {
+            return new Vector3(-90, 180, 0);
+        }
+        else
+        {
+            return new Vector3(0, 180, 0);
+        }
+
     }
 
     // Update is called once per frame
