@@ -82,11 +82,11 @@ public class MultipleTrackedImagesManager : MonoBehaviour
     {
         if(obj.name == "Patrick")
         {
-            return new Vector3(-90, 180, 0);
+            return new Vector3(-90, 0, 0);
         }
         else
         {
-            return new Vector3(0, 180, 0);
+            return new Vector3(0, 0, 0);
         }
 
     }
