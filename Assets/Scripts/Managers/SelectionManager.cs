@@ -32,6 +32,18 @@ public class SelectionManager : MonoBehaviour
 
     public List<Unit> selection;
 
+
+    private void Start()
+    {
+
+        EventBroadcaster.AddObserver(EVENT_NAMES.UI_EVENTS.ON_SELECTION_INVOKED, t => {
+            var index = (int)t["Ability ID"];
+            Ability a = AbilityManager.GetAbility(index);
+            Debug.Log($"[{index}]: {a.AbilityName}");
+        });
+
+    }
+
     private List<Unit> GetValidTargets(int PlayerIndex, ETargetType TargetingSchema)
     {
         var PlayerUnits = PlayerIndex == 1 ? BoardStateManager.instance.PlayerAUnit : BoardStateManager.instance.PlayerBUnit;

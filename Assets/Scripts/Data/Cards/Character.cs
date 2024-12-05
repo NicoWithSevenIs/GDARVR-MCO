@@ -6,7 +6,8 @@ using UnityEngine;
 public class Character : Card
 {
 
-    [Header("Character Model")]
+    [Header("Character Graphics")]
+    public Texture2D keyArt;
     public GameObject model;
 
     [Header("Character Stats")]

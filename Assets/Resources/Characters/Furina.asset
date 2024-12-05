@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Furina
   cardArt: {fileID: 2800000, guid: b5f156ddde6708e4f9a4bfd9c0c02846, type: 3}
-  model: {fileID: 919132149155446097, guid: 282cb47c6af046548a84afbf309d649b, type: 3}
+  keyArt: {fileID: 2800000, guid: cb999a5a0d0df5c4a85ea71c27e01ff3, type: 3}
+  model: {fileID: 3751114624037043235, guid: 5c2962099d834ba4ba82d09f54e80dc3, type: 3}
   power: 1
   health: 10
   Ability_1_ID: 1
