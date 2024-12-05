@@ -69,10 +69,9 @@ public class UI_CharacterView : MonoBehaviour
 
 
 
-        if (localPlayerController.NetworkPlayerIndex != u.OwnerID)
-            return;
+       
 
-            var c = u.Character;
+        var c = u.Character;
         characterName.text = c.name;
 
         UI_Utilities.SetUIActive (canvasGroup, true);
