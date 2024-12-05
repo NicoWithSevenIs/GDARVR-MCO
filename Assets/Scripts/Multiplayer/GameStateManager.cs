@@ -21,6 +21,12 @@ public class GameStateManager : NetworkBehaviour
     [SyncVar(hook = nameof(OnGameStateChanged))]
     private bool gameStarted = false;
 
+    [SyncVar(hook = nameof(OnGameOverChanged))]
+    private bool isGameOver = false;
+
+    [SyncVar(hook = nameof(OnWinnerIndexChanged))]
+    private int winnerIndex = -1;  // -1 means no winner yet
+
     // Player 1 Stats
     [SyncVar(hook = nameof(OnPlayer1NexusHPChanged))]
     private int player1NexusHP = 20;
@@ -56,6 +62,8 @@ public class GameStateManager : NetworkBehaviour
         isFirstPlayerPriority = true;
         activePlayerIndex = 0;
         gameStarted = true;
+        isGameOver = false;
+        winnerIndex = -1;
 
         // Initialize player stats
         player1NexusHP = 20;
@@ -74,6 +82,22 @@ public class GameStateManager : NetworkBehaviour
         if (newValue)
         {
             Debug.Log("Game has started!");
+        }
+    }
+
+    void OnGameOverChanged(bool oldValue, bool newValue)
+    {
+        if (newValue)
+        {
+            Debug.Log("Game has ended!");
+        }
+    }
+
+    void OnWinnerIndexChanged(int oldValue, int newValue)
+    {
+        if (newValue >= 0)
+        {
+            Debug.Log($"Winner is Player {newValue + 1}!");
         }
     }
 
@@ -219,12 +243,37 @@ public class GameStateManager : NetworkBehaviour
         return null;
     }
 
+    [Server]
+    private void CheckGameOver()
+    {
+        if (isGameOver) return;
+
+        if (player1NexusHP <= 0)
+        {
+            isGameOver = true;
+            winnerIndex = 1;  // Player 2 wins
+            RpcGameOver(1);
+        }
+        else if (player2NexusHP <= 0)
+        {
+            isGameOver = true;
+            winnerIndex = 0;  // Player 1 wins
+            RpcGameOver(0);
+        }
+    }
+
+    [ClientRpc]
+    private void RpcGameOver(int winner)
+    {
+        Debug.Log($"Game Over! Player {winner + 1} wins!");
+    }
 
     // Player 1 Command Methods
     [Command(requiresAuthority = false)]
     public void CmdModifyPlayer1NexusHP(int amount)
     {
         player1NexusHP = Mathf.Max(0, player1NexusHP + amount);
+        CheckGameOver();
     }
 
     [Command(requiresAuthority = false)]
@@ -244,6 +293,7 @@ public class GameStateManager : NetworkBehaviour
     public void CmdModifyPlayer2NexusHP(int amount)
     {
         player2NexusHP = Mathf.Max(0, player2NexusHP + amount);
+        CheckGameOver();
     }
 
     [Command(requiresAuthority = false)]
@@ -300,6 +350,8 @@ public class GameStateManager : NetworkBehaviour
     public Phase GetCurrentPhase() => currentPhase;
     public int GetActivePlayerIndex() => activePlayerIndex;
     public bool GetIsFirstPlayerPriority() => isFirstPlayerPriority;
+    public bool IsGameOver() => isGameOver;
+    public int GetWinnerIndex() => winnerIndex;
     public int GetPlayer1NexusHP() => player1NexusHP;
     public int GetPlayer1ActionBudget() => player1ActionBudget;
     public int GetPlayer1Mana() => player1Mana;

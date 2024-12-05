@@ -9,7 +9,7 @@ public class DevGameUI : MonoBehaviour
     private float rightMargin = 10f;
     private float topMargin = 10f;
     private float uiWidth = 200f;
-    private float uiHeight = 500f; 
+    private float uiHeight = 500f;
 
     void Awake()
     {
@@ -118,8 +118,29 @@ public class DevGameUI : MonoBehaviour
 
                 GUILayout.Space(10);
 
-                // Action Buttons (only shown if it's your turn)
-                if (isYourTurn)
+                // Game Over Display
+                if (gameStateManager.IsGameOver())
+                {
+                    GUILayout.Space(20);
+                    GUI.color = Color.yellow;
+                    GUILayout.Label("GAME OVER!", GUI.skin.box);
+
+                    int winner = gameStateManager.GetWinnerIndex();
+                    if (winner == localPlayer.NetworkPlayerIndex)
+                    {
+                        GUI.color = Color.green;
+                        GUILayout.Label("YOU WIN!", GUI.skin.box);
+                    }
+                    else
+                    {
+                        GUI.color = Color.red;
+                        GUILayout.Label("YOU LOSE!", GUI.skin.box);
+                    }
+                    GUI.color = Color.white;
+                }
+
+                // Action Buttons (only shown if it's your turn and game isn't over)
+                if (isYourTurn && !gameStateManager.IsGameOver())
                 {
                     Phase currentPhase = gameStateManager.GetCurrentPhase();
                     int playerIndex = localPlayer.NetworkPlayerIndex;
