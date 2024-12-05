@@ -21,5 +21,6 @@ public class FurinaAbility1 : Ability
     {
         Attacker.ChangeHealth(-2, false);
         Attacker.ChangePower(2);
+
     }
 }

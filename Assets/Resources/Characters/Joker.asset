@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b590012a8fe60674f8d2d8de0d760ba4, type: 3}
   m_Name: Joker
   m_EditorClassIdentifier: 
-  characterName: 
+  characterName: Joker
   cardArt: {fileID: 0}
-  model: {fileID: 0}
-  power: 0
-  health: 0
-  Ability_1_ID: 0
-  Ability_2_ID: 0
-  Ability_3_ID: 0
+  keyArt: {fileID: 2800000, guid: 54bee910ec4902644a3f80a064da7f4e, type: 3}
+  model: {fileID: 870072099190916204, guid: 0e0961a41cc48ea4390be8c595f3146c, type: 3}
+  power: 6
+  health: 2
+  Ability_1_ID: 104
+  Ability_2_ID: 105
+  Ability_3_ID: 106

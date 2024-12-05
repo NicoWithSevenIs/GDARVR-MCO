@@ -31,7 +31,10 @@ public class BoardStateManager : MonoBehaviour
 
     private void Start()
     {
-        characters = Resources.LoadAll("Resources/Character")as Character[];
+
+        characters =Resources.LoadAll<Character>("Characters");
+        Debug.Log("Count: " + characters?.Length.ToString() ?? "Null");
+      
     }
 
     public Unit ModelLookUp(GameObject model)
