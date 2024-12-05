@@ -1,3 +1,4 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -21,7 +22,9 @@ public class UI_CharacterView : MonoBehaviour
 
     private bool canInvoke = true;
 
-   
+
+    private PlayerController localPlayerController;
+
     private void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>();
@@ -42,7 +45,16 @@ public class UI_CharacterView : MonoBehaviour
 
 
     }
-    
+
+    private void Start()
+    {
+        if (NetworkClient.connection != null && NetworkClient.connection.identity != null)
+        {
+            localPlayerController = NetworkClient.connection.identity.GetComponent<PlayerController>();
+        }
+
+    }
+
     public void Back()
     {
         UI_Utilities.SetUIActive(canvasGroup, false);
@@ -54,7 +66,13 @@ public class UI_CharacterView : MonoBehaviour
             return;
 
         var u = p["Character"] as Unit;
-        var c = u.Character;
+
+
+
+        if (localPlayerController.NetworkPlayerIndex != u.OwnerID)
+            return;
+
+            var c = u.Character;
         characterName.text = c.name;
 
         UI_Utilities.SetUIActive (canvasGroup, true);
