@@ -32,7 +32,7 @@ public class Unit
 
     public void ChangePower(int amount)
     {
-        currentHealth = Mathf.Max(0, currentPower + amount);
+        currentPower = Mathf.Max(0, currentPower + amount);
     }
 
     public void ChangeHealth(int amount, bool willKill = true)
@@ -40,6 +40,7 @@ public class Unit
 
         currentHealth = Mathf.Max(0, currentHealth + amount);
         
+
         if(currentHealth > hightestHealth)
             hightestHealth = currentHealth;
 

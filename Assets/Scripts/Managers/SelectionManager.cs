@@ -19,10 +19,12 @@ public class SelectionManager : MonoBehaviour
 
     #endregion 
 
+    public int PlayerIndex;
     [SerializeField] private GameObject validSelectionIndicator;
     [SerializeField] private float yOffset = 1;
 
 
+    public bool isSelectorBusy { get => selectionSubject != null; }
     public Ability selectionSubject = null;
     private Unit requester;
 
@@ -32,15 +34,11 @@ public class SelectionManager : MonoBehaviour
 
     public List<Unit> selection;
 
-
     private void Start()
     {
 
-        EventBroadcaster.AddObserver(EVENT_NAMES.UI_EVENTS.ON_SELECTION_INVOKED, t => {
-            var index = (int)t["Ability ID"];
-            Ability a = AbilityManager.GetAbility(index);
-            Debug.Log($"[{index}]: {a.AbilityName}");
-        });
+        EventBroadcaster.AddObserver(EVENT_NAMES.UI_EVENTS.ON_SELECTION_INVOKED, t => RequestSelection(t["Ability"] as Ability, t["Requester"] as Unit) );
+        EventBroadcaster.AddObserver(EVENT_NAMES.UI_EVENTS.ON_SELECTION_ENDED, t => AbortSelection());
 
     }
 
@@ -54,7 +52,10 @@ public class SelectionManager : MonoBehaviour
             case ETargetType.SELF: return new() { requester };
             case ETargetType.ALLY:
             case ETargetType.ALL_ALLIES: return PlayerUnits;
-            case ETargetType.OTHER_ALLIES: return PlayerUnits.Where(t => t != requester).ToList();
+            case ETargetType.OTHER_ALLIES: 
+                    var list = new List<Unit>(PlayerUnits);
+                    list.Remove(requester);
+                    return list;
             case ETargetType.ENEMY_SINGLE:
             case ETargetType.ALL_ENEMIES: return EnemyUnits;
         }
@@ -62,15 +63,16 @@ public class SelectionManager : MonoBehaviour
         return null;
     }
 
-    public void RequestSelection(Ability subject, int PlayerIndex, Unit Requester)
+    public void RequestSelection(Ability subject, Unit Requester)
     {
-        if (subject != null)
-            return;
+        if(isSelectorBusy) return;
 
         selectionSubject = subject;
         requester = Requester;
 
         validSelectables = GetValidTargets(PlayerIndex, subject.TargetType);
+
+        Debug.Log(validSelectables.Count + " " + subject.TargetType.ToString());
 
         foreach (Unit validSelectable in validSelectables)
         {
@@ -80,38 +82,6 @@ public class SelectionManager : MonoBehaviour
             indicators.Add(indicator);
         }
 
-   
-        //subscribe event here
-    }
-
-    public void OnTap(Dictionary <string, object> p)
-    {
-        Unit unitSelected = BoardStateManager.instance.ModelLookUp(p["Model"] as GameObject);
-
-        if (unitSelected == null || !validSelectables.Contains(unitSelected))
-            return;
-
-        selection = new();
-
-        /*
-        switch (selectionSubject.TargetType)
-        {
-            case ETargetType.SELF: selection.Add(requester); break;
-            case ETargetType.ALLY: 
-            case ETargetType.ENEMY_SINGLE: selectionSubject.
-
-
-            case ETargetType.ALL_ALLIES: 
-            case ETargetType.OTHER_ALLIES:
-  
-            case ETargetType.ALL_ENEMIES: return EnemyUnits;
-        }
-
-
-        AbortSelection();
-
-        //fire event here
-        */
     }
 
     private void AbortSelection()
@@ -120,6 +90,44 @@ public class SelectionManager : MonoBehaviour
         foreach (var indicator in indicators)
             Destroy(indicator);
         indicators.Clear();
-        //fire event here
     }
+
+    private void Update()
+    {
+        //
+        if(!isSelectorBusy || !Input.GetMouseButtonDown(0)) return;
+
+        RaycastHit hit;
+        Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if (!Physics.Raycast(r, out hit, 1000))
+            return;
+
+        Unit unitHit = BoardStateManager.instance.ModelLookUp(hit.collider.gameObject);
+
+        if (!validSelectables.Contains(unitHit))
+            return;
+
+
+        List<Unit> targets = new();
+
+        switch (selectionSubject.TargetType)
+        {
+            case ETargetType.SELF: targets.Add(requester); break;
+            case ETargetType.ENEMY_SINGLE:
+            case ETargetType.ALLY: targets.Add(unitHit); break;
+            case ETargetType.OTHER_ALLIES: 
+            case ETargetType.ALL_ALLIES: 
+            case ETargetType.ALL_ENEMIES: targets.AddRange(validSelectables); break;
+        }
+
+        selectionSubject.ExecuteAbility(requester, targets);
+
+        var p = new Dictionary<string, object>();
+        p["Will Show Panel"] = false;
+        EventBroadcaster.InvokeEvent(EVENT_NAMES.UI_EVENTS.ON_SELECTION_ENDED, p);
+
+    }
+
+ 
 }

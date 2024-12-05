@@ -5,14 +5,14 @@ using UnityEngine;
 public class RaycastTester : MonoBehaviour
 {
 
-    [SerializeField] private List<GameObject> models;
-
+    [SerializeField] private List<GameObject> playerModels;
+    [SerializeField] private List<GameObject> enemyModels;
     private void Start()
     {
-        foreach (var model in models)
-        {
+        foreach (var model in playerModels)
             BoardStateManager.instance.MakeCharacter(1, model);
-        }
+        foreach (var model in enemyModels)
+            BoardStateManager.instance.MakeCharacter(2, model);
     }
 
     private void Update()

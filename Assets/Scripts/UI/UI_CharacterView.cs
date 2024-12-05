@@ -15,6 +15,8 @@ public class UI_CharacterView : MonoBehaviour
 
 
     private CanvasGroup canvasGroup;
+
+    private Unit Requester;
     private List<int> l;
 
     private bool canInvoke = true;
@@ -59,7 +61,10 @@ public class UI_CharacterView : MonoBehaviour
 
         characterKeyArt.sprite = Sprite.Create(c.keyArt, new Rect(0,0,c.keyArt.width, c.keyArt.height), Vector2.one * 0.5f);
 
+        Requester = u;
         l = new List<int>() { c.Ability_1_ID, c.Ability_2_ID, c.Ability_3_ID };
+
+        Debug.Log("new:" + u.CurrentHealth);
 
         health.text = $"{u.CurrentHealth}";
         power.text = $"{u.CurrentPower}";
@@ -86,7 +91,8 @@ public class UI_CharacterView : MonoBehaviour
         index = Mathf.Clamp(index, 0, l.Count-1);
 
         var p = new Dictionary<string ,object>();
-        p["Ability ID"] = l[index];
+        p["Ability"] = AbilityManager.GetAbility(l[index]);
+        p["Requester"] = Requester;
         EventBroadcaster.InvokeEvent(EVENT_NAMES.UI_EVENTS.ON_SELECTION_INVOKED, p);
     }
 }
