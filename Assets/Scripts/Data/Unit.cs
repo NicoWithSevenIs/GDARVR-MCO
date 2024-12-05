@@ -1,9 +1,13 @@
+using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Unit
 {
+    private int ownerID;
+    public int OwnerID { get => ownerID; }
+
     private Character character;
     public Character Character { get => character; }
 
@@ -20,11 +24,12 @@ public class Unit
     private GameObject fieldObject;
     public GameObject FieldObject { get => fieldObject; }
 
-    public Unit(Character character, GameObject fieldObject)
+    public Unit(Character character, GameObject fieldObject, int ownerIndex)
     {
         this.character = character;
         currentHealth = character.health;
         currentPower = character.power;
+        this.ownerID = ownerIndex;
 
         hightestHealth = character.health;
         this.fieldObject = fieldObject;

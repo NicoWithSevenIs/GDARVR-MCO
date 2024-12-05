@@ -51,7 +51,7 @@ public class BoardStateManager : MonoBehaviour
     {
         Character c = Array.Find<Character>(characters, t => t.model.name == model.name);
         var UnitPool = PlayerIndex == 1 ? playerAUnits : playerBUnits;
-        var newUnit = new Unit(c, model);
+        var newUnit = new Unit(c, model, PlayerIndex);
         UnitPool.Add(newUnit);
     }
 
