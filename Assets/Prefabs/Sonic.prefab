@@ -1756,8 +1756,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7390202580335375623}
-  - component: {fileID: 4928619302514912977}
-  - component: {fileID: 3823960060589110280}
+  - component: {fileID: 8008232480522544790}
   m_Layer: 0
   m_Name: Sonic
   m_TagString: Untagged
@@ -1773,9 +1772,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4866910601254201176}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
-  m_LocalScale: {x: 0.14, y: 0.14, z: 0.14}
+  m_LocalScale: {x: 1.3536, y: 1.3536, z: 1.3536}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6591652843806293939}
@@ -1783,19 +1782,7 @@ Transform:
   - {fileID: 227503405931852292}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4928619302514912977
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4866910601254201176}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5875b154c40351d41a05f9e25d536522, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!136 &3823960060589110280
+--- !u!136 &8008232480522544790
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1814,10 +1801,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.26481396
-  m_Height: 1.2973982
+  m_Radius: 0.27
+  m_Height: 1.02
   m_Direction: 1
-  m_Center: {x: -0.004138691, y: 0.4479002, z: 0.025865808}
+  m_Center: {x: 0, y: 0.49, z: 0}
 --- !u!1 &4891252442492245604
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b590012a8fe60674f8d2d8de0d760ba4, type: 3}
   m_Name: Sonic
   m_EditorClassIdentifier: 
-  characterName: 
+  characterName: Sonic
   cardArt: {fileID: 0}
-  model: {fileID: 0}
-  power: 0
-  health: 0
-  Ability_1_ID: 0
-  Ability_2_ID: 0
+  keyArt: {fileID: 2800000, guid: 44d277197a1f75f4ab41d56cd6887b3e, type: 3}
+  model: {fileID: 4866910601254201176, guid: d2d619340ff96524b8eb5ee092de769e, type: 3}
+  power: 4
+  health: 4
+  Ability_1_ID: 16
+  Ability_2_ID: 17
   Ability_3_ID: 0

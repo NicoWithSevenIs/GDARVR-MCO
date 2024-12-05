@@ -14,13 +14,13 @@ public class FurinaAbility3 : Ability
 
     public override string Description => "Sets Furina's Power to 1. All Allies gain Power equal to the Power she lost";
 
-    public override ETargetType TargetType => throw new System.NotImplementedException();
+    public override ETargetType TargetType => ETargetType.OTHER_ALLIES;
 
     public override void ExecuteAbility(Unit Attacker, List<Unit> Targets)
     {
         int sharedPower = Mathf.Max(0, Attacker.CurrentPower-1);
         foreach (var unit in Targets)
             unit.ChangePower(sharedPower);
-        Attacker.CurrentHealth = 1;
+        Attacker.CurrentPower = 1;
     }
 }

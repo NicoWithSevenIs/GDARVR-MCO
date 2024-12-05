@@ -7,9 +7,7 @@ public enum ETargetType
     SELF,
     ALLY,
     OTHER_ALLIES,
-    ALLY_MULTIPLE,
     ENEMY_SINGLE,
-    ENEMY_MULTIPLE,
     ALL_ENEMIES,
     ALL_ALLIES,
 }
